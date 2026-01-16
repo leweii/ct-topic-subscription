@@ -23,6 +23,7 @@ export default function SubscriptionPage() {
 
   useEffect(() => {
     loadSubscription();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function loadSubscription() {

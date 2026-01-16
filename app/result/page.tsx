@@ -15,6 +15,7 @@ export default function ResultPage() {
 
   useEffect(() => {
     loadLatestArtifact();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function loadLatestArtifact() {
