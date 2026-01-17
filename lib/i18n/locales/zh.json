@@ -43,7 +43,18 @@
       "daily": "每天",
       "weekly": "每周",
       "monthly": "每月"
-    }
+    },
+    "sources": "信息源（可选）",
+    "addSource": "添加",
+    "sourcePlaceholder": "输入 YouTube 或博客链接",
+    "sourceCount": "已添加 {count}/{max} 个",
+    "sourceLimitReached": "链接数量已达上限",
+    "deleteSubscription": "删除",
+    "confirmDelete": "确定要删除此订阅吗？",
+    "newSubscription": "新建订阅",
+    "subscriptionList": "我的订阅",
+    "noSubscriptions": "暂无订阅",
+    "createFirst": "创建你的第一个订阅"
   },
   "result": {
     "back": "返回订阅",
