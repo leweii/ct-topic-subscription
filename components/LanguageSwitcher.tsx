@@ -5,7 +5,7 @@ import { useLanguage } from '@/lib/i18n/context';
 function GlobeIcon() {
   return (
     <svg
-      className="w-4 h-4"
+      className="w-5 h-5"
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"
@@ -25,24 +25,24 @@ export function LanguageSwitcher() {
   const { language, setLanguage } = useLanguage();
 
   return (
-    <div className="flex items-center gap-1 bg-gray-100 rounded-full px-2 py-1 border border-gray-200">
+    <div className="flex items-center gap-1.5 bg-white rounded-lg px-3 py-1.5 border-2 border-blue-500 shadow-sm">
       <GlobeIcon />
       <button
         onClick={() => setLanguage('en')}
-        className={`px-2 py-0.5 rounded-full text-sm transition-colors ${
+        className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
           language === 'en'
-            ? 'bg-blue-600 text-white font-medium'
-            : 'text-gray-600 hover:bg-gray-200'
+            ? 'bg-blue-600 text-white'
+            : 'text-gray-600 hover:bg-blue-50'
         }`}
       >
         EN
       </button>
       <button
         onClick={() => setLanguage('zh')}
-        className={`px-2 py-0.5 rounded-full text-sm transition-colors ${
+        className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
           language === 'zh'
-            ? 'bg-blue-600 text-white font-medium'
-            : 'text-gray-600 hover:bg-gray-200'
+            ? 'bg-blue-600 text-white'
+            : 'text-gray-600 hover:bg-blue-50'
         }`}
       >
         中文
