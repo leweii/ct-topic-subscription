@@ -2,15 +2,15 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { useLanguage } from '@/lib/i18n/context';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import type { Artifact } from '@/lib/types';
 
-export default function ResultPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id: subscriptionId } = use(params);
+export default function ResultPage({ params }: { params: { id: string } }) {
+  const subscriptionId = params.id;
   const [artifact, setArtifact] = useState<Artifact | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();

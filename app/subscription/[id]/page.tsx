@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { useLanguage } from '@/lib/i18n/context';
@@ -10,8 +10,8 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { SourceLinksInput } from '@/components/SourceLinksInput';
 import type { SubscriptionWithLinks, SubscriptionLink, TimeWindow, OutputMode, Frequency } from '@/lib/types';
 
-export default function EditSubscriptionPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default function EditSubscriptionPage({ params }: { params: { id: string } }) {
+  const id = params.id;
   const [subscription, setSubscription] = useState<SubscriptionWithLinks | null>(null);
   const [links, setLinks] = useState<SubscriptionLink[]>([]);
   const [loading, setLoading] = useState(true);
