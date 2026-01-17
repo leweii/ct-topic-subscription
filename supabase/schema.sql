@@ -73,3 +73,49 @@ create index if not exists idx_subscriptions_next_run_at on public.subscriptions
 create index if not exists idx_artifacts_user_id on public.artifacts(user_id);
 create index if not exists idx_artifacts_subscription_id on public.artifacts(subscription_id);
 create index if not exists idx_artifacts_created_at on public.artifacts(created_at desc);
+
+-- Remove unique constraint on user_id (allows multiple subscriptions per user)
+-- Run this in Supabase SQL editor:
+-- ALTER TABLE public.subscriptions DROP CONSTRAINT IF EXISTS subscriptions_user_id_key;
+
+-- Subscription links table
+create table if not exists public.subscription_links (
+  id uuid primary key default gen_random_uuid(),
+  subscription_id uuid references public.subscriptions(id) on delete cascade not null,
+  url text not null,
+  created_at timestamptz default now() not null,
+
+  unique(subscription_id, url)
+);
+
+-- Enable RLS
+alter table public.subscription_links enable row level security;
+
+-- RLS Policy (access through subscription's user_id)
+create policy "Users can view own subscription links"
+  on public.subscription_links for select
+  using (
+    subscription_id in (
+      select id from public.subscriptions where user_id = auth.uid()
+    )
+  );
+
+create policy "Users can insert own subscription links"
+  on public.subscription_links for insert
+  with check (
+    subscription_id in (
+      select id from public.subscriptions where user_id = auth.uid()
+    )
+  );
+
+create policy "Users can delete own subscription links"
+  on public.subscription_links for delete
+  using (
+    subscription_id in (
+      select id from public.subscriptions where user_id = auth.uid()
+    )
+  );
+
+-- Index
+create index if not exists idx_subscription_links_subscription_id
+  on public.subscription_links(subscription_id);
