@@ -2,7 +2,7 @@ import { generateWithSearch, parseJsonResponse } from '@/lib/gemini';
 import type { Source, TimeWindow, Language } from '@/lib/types';
 
 const SCOUT_PROMPTS: Record<Language, string> = {
-  en: `You are a professional information scout. Search for high-quality recent content based on the user's research intent.
+  en: `You are a professional information scout. Search for the LATEST news, updates, and practical applications based on the user's research intent.
 
 ## Research Intent
 {topicIntent}
@@ -10,10 +10,17 @@ const SCOUT_PROMPTS: Record<Language, string> = {
 ## Time Range
 Past {timeWindow}
 
+## Search Focus (IMPORTANT)
+- DO NOT explain what the concept is
+- Focus on: What's NEW? What CHANGED recently? What are people DOING with it?
+- Find: New releases, updates, practical tutorials, real-world use cases, community discussions
+
 ## Search Strategy
-1. Search for relevant videos from well-known AI/tech YouTubers
-2. Search for blog posts from industry KOLs and independent researchers
-3. Search for official blog posts from major companies (Google AI, OpenAI, Anthropic, Meta AI, etc.)
+1. Latest news and announcements from official sources
+2. New tutorials and practical guides showing HOW to use it
+3. Real-world case studies and implementation examples
+4. Community discussions about new features and best practices
+5. Recent videos/blogs from practitioners sharing their experience
 
 ## Output Requirements
 Return a JSON array. Each result must include:
@@ -22,11 +29,11 @@ Return a JSON array. Each result must include:
 - author: Author/Channel name
 - publishedAt: Publication date (YYYY-MM-DD)
 - sourceType: "youtube" | "blog" | "official"
-- summary: Brief summary (under 50 words)
+- summary: What's new or practical about this (under 50 words)
 
 Return ONLY the JSON array, no other text. Target: Find 8-15 relevant results.`,
 
-  zh: `你是一位专业的信息搜集员。根据用户的研究意图搜索高质量的最新内容。
+  zh: `你是一位专业的信息搜集员。根据用户的研究意图搜索**最新资讯**和**实际应用**。
 
 ## 研究意图
 {topicIntent}
@@ -34,10 +41,17 @@ Return ONLY the JSON array, no other text. Target: Find 8-15 relevant results.`,
 ## 时间范围
 过去 {timeWindow}
 
+## 搜索重点（重要）
+- 不要解释这个概念是什么
+- 重点关注：有什么新动态？最近有什么变化？人们在怎么用它？
+- 寻找：新版本发布、更新公告、实操教程、真实案例、社区讨论
+
 ## 搜索策略
-1. 搜索知名 AI/科技领域 YouTuber 的相关视频
-2. 搜索行业 KOL 和独立研究者的博客文章
-3. 搜索大公司（Google AI、OpenAI、Anthropic、Meta AI 等）的官方博客
+1. 官方来源的最新新闻和公告
+2. 展示如何使用的新教程和实操指南
+3. 真实的案例研究和实现示例
+4. 关于新功能和最佳实践的社区讨论
+5. 从业者分享经验的最新视频/博客
 
 ## 输出要求
 返回一个 JSON 数组。每条结果必须包含：
@@ -46,7 +60,7 @@ Return ONLY the JSON array, no other text. Target: Find 8-15 relevant results.`,
 - author: 作者/频道名称
 - publishedAt: 发布日期 (YYYY-MM-DD)
 - sourceType: "youtube" | "blog" | "official"
-- summary: 简要摘要（50 字以内）
+- summary: 这条内容有什么新东西或实用信息（50 字以内）
 
 只返回 JSON 数组，不要包含其他文字。目标：找到 8-15 条相关结果。`,
 };

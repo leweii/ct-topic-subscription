@@ -2,7 +2,7 @@ import { generate, parseJsonResponse } from '@/lib/gemini';
 import type { Source, Language } from '@/lib/types';
 
 const JUDGE_PROMPTS: Record<Language, string> = {
-  en: `You are a strict content quality reviewer. Evaluate whether the following content is worth analyzing in depth.
+  en: `You are a strict content quality reviewer. Filter content to keep only items with PRACTICAL VALUE.
 
 ## Research Intent
 {topicIntent}
@@ -10,11 +10,24 @@ const JUDGE_PROMPTS: Record<Language, string> = {
 ## Candidate Content
 {sourcesJson}
 
-## Evaluation Criteria
-1. **Relevance**: Is it directly related to the research intent?
-2. **Timeliness**: Is it new information, not a rehash of old news?
-3. **Credibility**: Is the source reliable? Does the author have professional background?
-4. **Depth**: Does it have substantial content, not just clickbait or shallow reporting?
+## Evaluation Criteria (IMPORTANT)
+1. **Practical Value**: Does it show HOW to use something, or report NEW developments?
+2. **Actionable Content**: Tutorials, case studies, release notes > general overviews or concept explanations
+3. **Timeliness**: Recent updates, new features, breaking news > evergreen explainers
+4. **Credibility**: Official sources, experienced practitioners > generic content farms
+
+## DISCARD These Types
+- Conceptual explanations ("What is X?")
+- Introductory overviews for beginners
+- Old content rehashed
+- Clickbait without substance
+
+## KEEP These Types
+- New release announcements
+- Practical tutorials showing real implementation
+- Case studies with specific details
+- Community discussions about new features
+- Experienced practitioners sharing tips
 
 ## Deduplication Rules
 - For multiple reports on the same event, keep only the 1-2 most in-depth pieces
@@ -27,7 +40,7 @@ Return a JSON array with each content item including these additional fields:
 
 Return ONLY the JSON array, no other text. Target: Keep 3-8 high-quality items.`,
 
-  zh: `你是一位严格的内容质量审核员。评估以下内容是否值得深入分析。
+  zh: `你是一位严格的内容质量审核员。筛选出具有**实用价值**的内容。
 
 ## 研究意图
 {topicIntent}
@@ -35,11 +48,24 @@ Return ONLY the JSON array, no other text. Target: Keep 3-8 high-quality items.`
 ## 候选内容
 {sourcesJson}
 
-## 评估标准
-1. **相关性**：是否与研究意图直接相关？
-2. **时效性**：是否是新信息，而非旧闻翻炒？
-3. **可信度**：来源是否可靠？作者是否有专业背景？
-4. **深度**：是否有实质内容，而非标题党或浅层报道？
+## 评估标准（重要）
+1. **实用价值**：是否展示了如何使用，或报道了新动态？
+2. **可操作性**：教程、案例、更新日志 > 概念解释或入门介绍
+3. **时效性**：最新更新、新功能、突发新闻 > 常青内容或概念科普
+4. **可信度**：官方来源、资深从业者 > 普通内容农场
+
+## 丢弃这类内容
+- 概念解释类（"什么是 X？"）
+- 面向初学者的入门介绍
+- 旧内容翻炒
+- 标题党无实质内容
+
+## 保留这类内容
+- 新版本发布公告
+- 展示真实实现的实操教程
+- 有具体细节的案例研究
+- 关于新功能的社区讨论
+- 资深从业者分享的技巧
 
 ## 去重规则
 - 同一事件的多篇报道，只保留 1-2 篇最深入的
