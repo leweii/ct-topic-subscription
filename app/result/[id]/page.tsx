@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import ReactMarkdown from 'react-markdown';
 import { createClient } from '@/lib/supabase/client';
 import { useLanguage } from '@/lib/i18n/context';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
@@ -154,10 +155,9 @@ export default function ResultPage({ params }: { params: { id: string } }) {
         <article className="bg-white rounded-lg shadow-md p-8">
           <h1 className="text-3xl font-bold mb-6">{content.output.title}</h1>
 
-          <div
-            className="prose prose-gray max-w-none mb-8"
-            dangerouslySetInnerHTML={{ __html: content.output.body.replace(/\n/g, '<br />') }}
-          />
+          <div className="prose prose-gray max-w-none mb-8">
+            <ReactMarkdown>{content.output.body}</ReactMarkdown>
+          </div>
 
           {content.output.uncertainties.length > 0 && (
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-8">
