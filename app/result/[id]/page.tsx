@@ -73,6 +73,68 @@ export default function ResultPage({ params }: { params: { id: string } }) {
 
   const { content } = artifact;
 
+  // Handle insufficient content case
+  if (content.insufficientContent) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="absolute top-4 right-4">
+            <LanguageSwitcher />
+          </div>
+
+          <div className="mb-6">
+            <a
+              href={`/subscription/${subscriptionId}`}
+              className="text-blue-600 hover:underline"
+            >
+              ← {t('result.back')}
+            </a>
+          </div>
+
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-8 text-center">
+            <h1 className="text-2xl font-bold text-amber-800 mb-4">
+              {content.output.title}
+            </h1>
+            <p className="text-amber-700 mb-4">
+              {content.insufficientContent.message}
+            </p>
+            <p className="text-sm text-amber-600">
+              {t('result.foundSources')}: {content.insufficientContent.foundCount} / {content.insufficientContent.requiredCount}
+            </p>
+            {content.meta.dateRange && (
+              <p className="text-sm text-amber-600 mt-2">
+                {t('result.dateRange')}: {content.meta.dateRange.startDate} ~ {content.meta.dateRange.endDate}
+              </p>
+            )}
+
+            {content.sources.length > 0 && (
+              <div className="mt-6 pt-6 border-t border-amber-200">
+                <h3 className="font-semibold text-amber-800 mb-3">{t('result.sourcesFound')}</h3>
+                <div className="space-y-2 text-left">
+                  {content.sources.map((source, i) => (
+                    <div key={i} className="text-sm">
+                      <a
+                        href={source.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`hover:underline ${source.kept ? 'text-blue-600' : 'text-gray-400 line-through'}`}
+                      >
+                        {source.title}
+                      </a>
+                      {source.reason && (
+                        <span className="text-gray-500 ml-2">({source.reason})</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4">

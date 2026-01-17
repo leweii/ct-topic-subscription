@@ -61,7 +61,10 @@
     "noResults": "暂无分析结果",
     "getStarted": "创建订阅以开始使用",
     "pointsToWatch": "待观察要点",
-    "sources": "信息来源"
+    "sources": "信息来源",
+    "foundSources": "找到内容",
+    "dateRange": "时间范围",
+    "sourcesFound": "搜索到的内容"
   },
   "pipeline": {
     "starting": "启动中...",

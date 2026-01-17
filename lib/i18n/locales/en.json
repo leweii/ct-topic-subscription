@@ -61,7 +61,10 @@
     "noResults": "No analysis results yet",
     "getStarted": "Create a subscription to get started",
     "pointsToWatch": "Points to Watch",
-    "sources": "Sources"
+    "sources": "Sources",
+    "foundSources": "Found sources",
+    "dateRange": "Date range",
+    "sourcesFound": "Sources found"
   },
   "pipeline": {
     "starting": "Starting...",
