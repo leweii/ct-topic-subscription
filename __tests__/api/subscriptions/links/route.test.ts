@@ -40,7 +40,7 @@ describe('POST /api/subscriptions/[id]/links', () => {
       body: JSON.stringify({ url: 'https://youtube.com/test' }),
     });
 
-    const response = await POST(request, { params: Promise.resolve({ id: 'sub-1' }) });
+    const response = await POST(request, { params: { id: 'sub-1' } });
     const data = await response.json();
 
     expect(response.status).toBe(401);
@@ -65,7 +65,7 @@ describe('POST /api/subscriptions/[id]/links', () => {
       body: JSON.stringify({ url: 'https://youtube.com/test' }),
     });
 
-    const response = await POST(request, { params: Promise.resolve({ id: 'sub-1' }) });
+    const response = await POST(request, { params: { id: 'sub-1' } });
     const data = await response.json();
 
     expect(response.status).toBe(404);
@@ -95,7 +95,7 @@ describe('POST /api/subscriptions/[id]/links', () => {
       body: JSON.stringify({ url: 'not-a-valid-url' }),
     });
 
-    const response = await POST(request, { params: Promise.resolve({ id: 'sub-1' }) });
+    const response = await POST(request, { params: { id: 'sub-1' } });
     const data = await response.json();
 
     expect(response.status).toBe(400);
@@ -125,7 +125,7 @@ describe('POST /api/subscriptions/[id]/links', () => {
       body: JSON.stringify({ url: 'https://youtube.com/test' }),
     });
 
-    const response = await POST(request, { params: Promise.resolve({ id: 'sub-1' }) });
+    const response = await POST(request, { params: { id: 'sub-1' } });
     const data = await response.json();
 
     expect(response.status).toBe(400);
@@ -170,7 +170,7 @@ describe('POST /api/subscriptions/[id]/links', () => {
       body: JSON.stringify({ url: 'https://youtube.com/test' }),
     });
 
-    const response = await POST(request, { params: Promise.resolve({ id: 'sub-1' }) });
+    const response = await POST(request, { params: { id: 'sub-1' } });
     const data = await response.json();
 
     expect(response.status).toBe(201);
@@ -207,7 +207,7 @@ describe('POST /api/subscriptions/[id]/links', () => {
       body: JSON.stringify({ url: 'https://youtube.com/test' }),
     });
 
-    const response = await POST(request, { params: Promise.resolve({ id: 'sub-1' }) });
+    const response = await POST(request, { params: { id: 'sub-1' } });
     const data = await response.json();
 
     expect(response.status).toBe(400);
@@ -228,7 +228,7 @@ describe('DELETE /api/subscriptions/[id]/links/[linkId]', () => {
     });
 
     const response = await DELETE(request, {
-      params: Promise.resolve({ id: 'sub-1', linkId: 'link-1' }),
+      params: { id: 'sub-1', linkId: 'link-1' },
     });
     const data = await response.json();
 
@@ -253,7 +253,7 @@ describe('DELETE /api/subscriptions/[id]/links/[linkId]', () => {
     });
 
     const response = await DELETE(request, {
-      params: Promise.resolve({ id: 'sub-1', linkId: 'link-1' }),
+      params: { id: 'sub-1', linkId: 'link-1' },
     });
     const data = await response.json();
 
@@ -286,7 +286,7 @@ describe('DELETE /api/subscriptions/[id]/links/[linkId]', () => {
     });
 
     const response = await DELETE(request, {
-      params: Promise.resolve({ id: 'sub-1', linkId: 'link-1' }),
+      params: { id: 'sub-1', linkId: 'link-1' },
     });
     const data = await response.json();
 

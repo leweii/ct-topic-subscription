@@ -7,11 +7,11 @@ import type { TimeWindow, OutputMode, Frequency, Language } from '@/lib/types';
 export const maxDuration = 60;
 
 interface RouteParams {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }
 
 export async function POST(request: Request, { params }: RouteParams) {
-  const { id: subscriptionId } = await params;
+  const subscriptionId = params.id;
   const { language = 'en' } = await request.json().catch(() => ({})) as { language?: Language };
   const supabase = await createClient();
 

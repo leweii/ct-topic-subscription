@@ -3,11 +3,11 @@ import { createClient } from '@/lib/supabase/server';
 import type { TimeWindow, OutputMode, Frequency } from '@/lib/types';
 
 interface RouteParams {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }
 
 export async function GET(_request: Request, { params }: RouteParams) {
-  const { id } = await params;
+  const id = params.id;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -30,7 +30,7 @@ export async function GET(_request: Request, { params }: RouteParams) {
 }
 
 export async function PUT(request: Request, { params }: RouteParams) {
-  const { id } = await params;
+  const id = params.id;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -62,7 +62,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
 }
 
 export async function DELETE(_request: Request, { params }: RouteParams) {
-  const { id } = await params;
+  const id = params.id;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 

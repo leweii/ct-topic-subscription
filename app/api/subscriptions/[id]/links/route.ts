@@ -7,11 +7,11 @@ const LINK_LIMITS = {
 };
 
 interface RouteParams {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }
 
 export async function POST(request: Request, { params }: RouteParams) {
-  const { id: subscriptionId } = await params;
+  const subscriptionId = params.id;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
