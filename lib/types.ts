@@ -18,6 +18,17 @@ export interface Subscription {
   updated_at: string;
 }
 
+export interface SubscriptionLink {
+  id: string;
+  subscription_id: string;
+  url: string;
+  created_at: string;
+}
+
+export interface SubscriptionWithLinks extends Subscription {
+  subscription_links?: SubscriptionLink[];
+}
+
 export interface Source {
   title: string;
   url: string;
