@@ -2,7 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { runPipeline } from '@/lib/agent/pipeline';
 import { calculateNextRun } from '@/lib/utils';
-import type { TimeWindow, OutputMode, Frequency } from '@/lib/types';
+import { sendReportEmail } from '@/lib/email';
+import type { TimeWindow, OutputMode, Frequency, Language } from '@/lib/types';
+
+function detectLanguage(text: string): Language {
+  const chineseRegex = /[\u4e00-\u9fa5]/;
+  return chineseRegex.test(text) ? 'zh' : 'en';
+}
 
 export const maxDuration = 300;
 
@@ -31,22 +37,29 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ message: 'No subscriptions to run', count: 0 });
   }
 
-  const results: Array<{ id: string; status: string; error?: string }> = [];
+  const results: Array<{ id: string; status: string; error?: string; emailSent?: boolean }> = [];
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://your-app.vercel.app';
 
   for (const sub of subscriptions) {
     try {
+      const language = detectLanguage(sub.topic_intent);
+
       const artifact = await runPipeline({
         topicIntent: sub.topic_intent,
         timeWindow: sub.time_window as TimeWindow,
         outputMode: sub.output_mode as OutputMode,
-        language: 'en', // Default to English for scheduled runs
+        language,
       });
 
-      await supabase.from('artifacts').insert({
-        subscription_id: sub.id,
-        user_id: sub.user_id,
-        content: artifact,
-      });
+      const { data: insertedArtifact } = await supabase
+        .from('artifacts')
+        .insert({
+          subscription_id: sub.id,
+          user_id: sub.user_id,
+          content: artifact,
+        })
+        .select('id')
+        .single();
 
       await supabase
         .from('subscriptions')
@@ -56,7 +69,25 @@ export async function GET(request: NextRequest) {
         })
         .eq('id', sub.id);
 
-      results.push({ id: sub.id, status: 'success' });
+      // Send email notification
+      let emailSent = false;
+      if (insertedArtifact?.id) {
+        const { data: userData } = await supabase.auth.admin.getUserById(sub.user_id);
+        const userEmail = userData?.user?.email;
+
+        if (userEmail) {
+          const reportUrl = `${baseUrl}/result/${insertedArtifact.id}`;
+          const emailResult = await sendReportEmail({
+            to: userEmail,
+            artifact,
+            reportUrl,
+            language,
+          });
+          emailSent = emailResult.success;
+        }
+      }
+
+      results.push({ id: sub.id, status: 'success', emailSent });
     } catch (error) {
       console.error(`Error running subscription ${sub.id}:`, error);
       results.push({
