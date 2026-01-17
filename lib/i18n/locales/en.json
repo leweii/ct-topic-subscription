@@ -1,4 +1,8 @@
 {
+  "metadata": {
+    "title": "Daily Report - AI Research Assistant",
+    "description": "Subscribe to AI-powered research briefs on your topics of interest"
+  },
   "login": {
     "title": "Sign In",
     "email": "Email address",

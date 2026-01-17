@@ -1,4 +1,8 @@
 {
+  "metadata": {
+    "title": "畅谈报告 - AI Research Assistant",
+    "description": "订阅 AI 驱动的研究简报，追踪你感兴趣的话题"
+  },
   "login": {
     "title": "登录",
     "email": "邮箱地址",
