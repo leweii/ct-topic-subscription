@@ -56,10 +56,13 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     return getNestedValue(translations[language] as unknown as Record<string, unknown>, key);
   };
 
-  // Always provide context, even during SSR - just hide content until mounted
+  // Always provide context, even during SSR
+  // Keep consistent DOM structure to avoid React hooks error #310
   return (
     <LanguageContext.Provider value={{ language, setLanguage, t }}>
-      {mounted ? children : <div style={{ visibility: 'hidden' }}>{children}</div>}
+      <div style={{ visibility: mounted ? 'visible' : 'hidden' }}>
+        {children}
+      </div>
     </LanguageContext.Provider>
   );
 }
