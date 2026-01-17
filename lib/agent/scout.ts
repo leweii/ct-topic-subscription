@@ -7,8 +7,9 @@ const SCOUT_PROMPTS: Record<Language, string> = {
 ## Research Intent
 {topicIntent}
 
-## Time Range
-Past {timeWindow}
+## Time Range (STRICT)
+**ONLY search for content published between {startDate} and {endDate}.**
+Today is {today}. Do NOT include any content published before {startDate}.
 
 ## Search Focus (IMPORTANT)
 - DO NOT explain what the concept is
@@ -27,19 +28,20 @@ Return a JSON array. Each result must include:
 - title: Title
 - url: Link
 - author: Author/Channel name
-- publishedAt: Publication date (YYYY-MM-DD)
+- publishedAt: Publication date (YYYY-MM-DD) - MUST be between {startDate} and {endDate}
 - sourceType: "youtube" | "blog" | "official"
 - summary: What's new or practical about this (under 50 words)
 
-Return ONLY the JSON array, no other text. Target: Find 8-15 relevant results.`,
+Return ONLY the JSON array, no other text. Target: Find 8-15 relevant results within the date range.`,
 
   zh: `你是一位专业的信息搜集员。根据用户的研究意图搜索**最新资讯**和**实际应用**。
 
 ## 研究意图
 {topicIntent}
 
-## 时间范围
-过去 {timeWindow}
+## 时间范围（严格）
+**只搜索 {startDate} 至 {endDate} 期间发布的内容。**
+今天是 {today}。不要包含任何 {startDate} 之前发布的内容。
 
 ## 搜索重点（重要）
 - 不要解释这个概念是什么
@@ -58,28 +60,38 @@ Return ONLY the JSON array, no other text. Target: Find 8-15 relevant results.`,
 - title: 标题
 - url: 链接
 - author: 作者/频道名称
-- publishedAt: 发布日期 (YYYY-MM-DD)
+- publishedAt: 发布日期 (YYYY-MM-DD) - 必须在 {startDate} 至 {endDate} 之间
 - sourceType: "youtube" | "blog" | "official"
 - summary: 这条内容有什么新东西或实用信息（50 字以内）
 
-只返回 JSON 数组，不要包含其他文字。目标：找到 8-15 条相关结果。`,
+只返回 JSON 数组，不要包含其他文字。目标：在日期范围内找到 8-15 条相关结果。`,
 };
 
-const TIME_WINDOW_MAP: Record<Language, Record<TimeWindow, string>> = {
-  en: {
-    '3d': '3 days',
-    '7d': '7 days',
-    '30d': '30 days',
-  },
-  zh: {
-    '3d': '3 天',
-    '7d': '7 天',
-    '30d': '30 天',
-  },
+const TIME_WINDOW_DAYS: Record<TimeWindow, number> = {
+  '3d': 3,
+  '7d': 7,
+  '30d': 30,
 };
+
+function formatDate(date: Date): string {
+  return date.toISOString().split('T')[0];
+}
+
+function calculateDateRange(timeWindow: TimeWindow): { startDate: string; endDate: string; today: string } {
+  const now = new Date();
+  const today = formatDate(now);
+  const endDate = today;
+
+  const startDateObj = new Date(now);
+  startDateObj.setDate(startDateObj.getDate() - TIME_WINDOW_DAYS[timeWindow]);
+  const startDate = formatDate(startDateObj);
+
+  return { startDate, endDate, today };
+}
 
 export interface ScoutResult {
   sources: Source[];
+  dateRange: { startDate: string; endDate: string };
 }
 
 export async function scout(
@@ -87,12 +99,16 @@ export async function scout(
   timeWindow: TimeWindow,
   language: Language = 'en'
 ): Promise<ScoutResult> {
+  const { startDate, endDate, today } = calculateDateRange(timeWindow);
+
   const prompt = SCOUT_PROMPTS[language]
     .replace('{topicIntent}', topicIntent)
-    .replace('{timeWindow}', TIME_WINDOW_MAP[language][timeWindow]);
+    .replace(/{startDate}/g, startDate)
+    .replace(/{endDate}/g, endDate)
+    .replace(/{today}/g, today);
 
   const response = await generateWithSearch(prompt);
   const sources = parseJsonResponse<Source[]>(response);
 
-  return { sources };
+  return { sources, dateRange: { startDate, endDate } };
 }

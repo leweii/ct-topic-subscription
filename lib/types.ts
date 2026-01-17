@@ -60,10 +60,19 @@ export interface ArtifactContent {
     timeWindow: TimeWindow;
     outputMode: OutputMode;
     generatedAt: string;
+    dateRange?: {
+      startDate: string;
+      endDate: string;
+    };
   };
   sources: Source[];
   insights: Insight[];
   output: ArtifactOutput;
+  insufficientContent?: {
+    message: string;
+    foundCount: number;
+    requiredCount: number;
+  };
 }
 
 export interface Artifact {

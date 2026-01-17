@@ -79,23 +79,98 @@ Return ONLY the JSON array, no other text. Target: Keep 3-8 high-quality items.`
 只返回 JSON 数组，不要包含其他文字。目标：保留 3-8 条高质量内容。`,
 };
 
+export interface DateRange {
+  startDate: string;
+  endDate: string;
+}
+
 export interface JudgeResult {
   allSources: Source[];
   keptSources: Source[];
+  filteredByDate: number;
+}
+
+function isWithinDateRange(publishedAt: string, dateRange: DateRange): boolean {
+  // Handle various date formats
+  const pubDate = new Date(publishedAt);
+  if (isNaN(pubDate.getTime())) {
+    // If date is invalid, assume it's old and filter it out
+    return false;
+  }
+
+  const start = new Date(dateRange.startDate);
+  const end = new Date(dateRange.endDate);
+  // Add one day to end date to include the full end day
+  end.setDate(end.getDate() + 1);
+
+  return pubDate >= start && pubDate < end;
 }
 
 export async function judge(
   sources: Source[],
   topicIntent: string,
-  language: Language = 'en'
+  language: Language = 'en',
+  dateRange?: DateRange
 ): Promise<JudgeResult> {
+  // Step 1: Hard date filter (if dateRange provided)
+  let filteredByDate = 0;
+  let sourcesToJudge = sources;
+
+  if (dateRange) {
+    const dateFilteredSources: Source[] = [];
+    const outOfRangeSources: Source[] = [];
+
+    for (const source of sources) {
+      if (isWithinDateRange(source.publishedAt, dateRange)) {
+        dateFilteredSources.push(source);
+      } else {
+        outOfRangeSources.push({
+          ...source,
+          kept: false,
+          reason: language === 'zh'
+            ? `超出时间范围 (${dateRange.startDate} - ${dateRange.endDate})`
+            : `Outside date range (${dateRange.startDate} - ${dateRange.endDate})`,
+        });
+        filteredByDate++;
+      }
+    }
+
+    sourcesToJudge = dateFilteredSources;
+
+    // If no sources left after date filtering, return early
+    if (sourcesToJudge.length === 0) {
+      return {
+        allSources: outOfRangeSources,
+        keptSources: [],
+        filteredByDate,
+      };
+    }
+  }
+
+  // Step 2: Quality filter via LLM
   const prompt = JUDGE_PROMPTS[language]
     .replace('{topicIntent}', topicIntent)
-    .replace('{sourcesJson}', JSON.stringify(sources, null, 2));
+    .replace('{sourcesJson}', JSON.stringify(sourcesToJudge, null, 2));
 
   const response = await generate(prompt);
-  const allSources = parseJsonResponse<Source[]>(response);
-  const keptSources = allSources.filter((s) => s.kept);
+  const judgedSources = parseJsonResponse<Source[]>(response);
+  const keptSources = judgedSources.filter((s) => s.kept);
 
-  return { allSources, keptSources };
+  // Combine date-filtered sources with quality-filtered sources
+  const allSources = dateRange
+    ? [
+        ...judgedSources,
+        ...sources
+          .filter((s) => !isWithinDateRange(s.publishedAt, dateRange))
+          .map((s) => ({
+            ...s,
+            kept: false,
+            reason: language === 'zh'
+              ? `超出时间范围 (${dateRange.startDate} - ${dateRange.endDate})`
+              : `Outside date range (${dateRange.startDate} - ${dateRange.endDate})`,
+          })),
+      ]
+    : judgedSources;
+
+  return { allSources, keptSources, filteredByDate };
 }
