@@ -23,9 +23,9 @@ export async function runPipeline(
   const analystResult = await analyst(judgeResult.keptSources, input.topicIntent);
   callbacks?.onStageComplete?.('analyst', analystResult);
 
-  // 4. Editor: Generate final output
+  // 4. Editor: Generate final output in the specified language
   callbacks?.onStageStart?.('editor');
-  const editorResult = await editor(analystResult.insights, input.outputMode);
+  const editorResult = await editor(analystResult.insights, input.outputMode, input.language);
   callbacks?.onStageComplete?.('editor', editorResult);
 
   return {

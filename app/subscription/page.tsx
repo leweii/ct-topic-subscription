@@ -3,14 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { useLanguage } from '@/lib/i18n/context';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import type { Subscription, TimeWindow, OutputMode, Frequency } from '@/lib/types';
-
-const STAGE_LABELS: Record<string, string> = {
-  scout: 'Searching...',
-  judge: 'Filtering...',
-  analyst: 'Analyzing...',
-  editor: 'Writing...',
-};
 
 export default function SubscriptionPage() {
   const [subscription, setSubscription] = useState<Subscription | null>(null);
@@ -20,6 +15,14 @@ export default function SubscriptionPage() {
   const [saving, setSaving] = useState(false);
   const router = useRouter();
   const supabase = createClient();
+  const { t, language } = useLanguage();
+
+  const STAGE_LABELS: Record<string, string> = {
+    scout: t('pipeline.searching'),
+    judge: t('pipeline.filtering'),
+    analyst: t('pipeline.analyzing'),
+    editor: t('pipeline.writing'),
+  };
 
   useEffect(() => {
     loadSubscription();
@@ -75,10 +78,14 @@ export default function SubscriptionPage() {
 
   async function runAgent() {
     setRunning(true);
-    setStage('Starting...');
+    setStage(t('pipeline.starting'));
 
     try {
-      const response = await fetch('/api/run', { method: 'POST' });
+      const response = await fetch('/api/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ language }),
+      });
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
 
@@ -110,7 +117,7 @@ export default function SubscriptionPage() {
       }
     } catch (error) {
       console.error('Run error:', error);
-      setStage('Error occurred');
+      setStage(t('pipeline.error'));
     }
 
     setRunning(false);
@@ -124,7 +131,7 @@ export default function SubscriptionPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-500">Loading...</div>
+        <div className="text-gray-500">{t('common.loading')}</div>
       </div>
     );
   }
@@ -134,27 +141,30 @@ export default function SubscriptionPage() {
       <div className="max-w-2xl mx-auto px-4">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold">
-            {subscription ? 'Edit Subscription' : 'Create Subscription'}
+            {subscription ? t('subscription.edit') : t('subscription.create')}
           </h1>
-          <button
-            onClick={handleSignOut}
-            className="text-gray-500 hover:text-gray-700 text-sm"
-          >
-            Sign out
-          </button>
+          <div className="flex items-center gap-4">
+            <LanguageSwitcher />
+            <button
+              onClick={handleSignOut}
+              className="text-gray-500 hover:text-gray-700 text-sm"
+            >
+              {t('subscription.signOut')}
+            </button>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6 space-y-6">
           <div>
             <label htmlFor="topicIntent" className="block text-sm font-medium text-gray-700 mb-1">
-              Research Intent
+              {t('subscription.topicLabel')}
             </label>
             <textarea
               id="topicIntent"
               name="topicIntent"
               rows={3}
               defaultValue={subscription?.topic_intent || ''}
-              placeholder="Describe what you want to track, e.g., Latest developments in AI agents"
+              placeholder={t('subscription.topicPlaceholder')}
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
@@ -163,7 +173,7 @@ export default function SubscriptionPage() {
           <div className="grid grid-cols-3 gap-4">
             <div>
               <label htmlFor="timeWindow" className="block text-sm font-medium text-gray-700 mb-1">
-                Time Window
+                {t('subscription.timeWindow')}
               </label>
               <select
                 id="timeWindow"
@@ -171,15 +181,15 @@ export default function SubscriptionPage() {
                 defaultValue={subscription?.time_window || '7d'}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
               >
-                <option value="3d">Past 3 days</option>
-                <option value="7d">Past 7 days</option>
-                <option value="30d">Past 30 days</option>
+                <option value="3d">{t('subscription.timeOptions.3d')}</option>
+                <option value="7d">{t('subscription.timeOptions.7d')}</option>
+                <option value="30d">{t('subscription.timeOptions.30d')}</option>
               </select>
             </div>
 
             <div>
               <label htmlFor="outputMode" className="block text-sm font-medium text-gray-700 mb-1">
-                Output Mode
+                {t('subscription.outputMode')}
               </label>
               <select
                 id="outputMode"
@@ -187,14 +197,14 @@ export default function SubscriptionPage() {
                 defaultValue={subscription?.output_mode || 'brief'}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
               >
-                <option value="brief">Brief</option>
-                <option value="report">Report</option>
+                <option value="brief">{t('subscription.outputOptions.brief')}</option>
+                <option value="report">{t('subscription.outputOptions.report')}</option>
               </select>
             </div>
 
             <div>
               <label htmlFor="frequency" className="block text-sm font-medium text-gray-700 mb-1">
-                Frequency
+                {t('subscription.frequency')}
               </label>
               <select
                 id="frequency"
@@ -202,10 +212,10 @@ export default function SubscriptionPage() {
                 defaultValue={subscription?.frequency || 'once'}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
               >
-                <option value="once">One-time</option>
-                <option value="daily">Daily</option>
-                <option value="weekly">Weekly</option>
-                <option value="monthly">Monthly</option>
+                <option value="once">{t('subscription.frequencyOptions.once')}</option>
+                <option value="daily">{t('subscription.frequencyOptions.daily')}</option>
+                <option value="weekly">{t('subscription.frequencyOptions.weekly')}</option>
+                <option value="monthly">{t('subscription.frequencyOptions.monthly')}</option>
               </select>
             </div>
           </div>
@@ -215,14 +225,14 @@ export default function SubscriptionPage() {
             disabled={running || saving}
             className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium rounded-md transition-colors"
           >
-            {running ? stage : saving ? 'Saving...' : subscription ? 'Save & Run' : 'Create & Run'}
+            {running ? stage : saving ? t('subscription.saving') : subscription ? t('subscription.saveRun') : t('subscription.createRun')}
           </button>
         </form>
 
         {subscription?.last_run_at && (
           <div className="mt-4 text-center">
             <a href="/result" className="text-blue-600 hover:underline">
-              View latest result →
+              {t('subscription.viewResult')} →
             </a>
           </div>
         )}

@@ -2,11 +2,12 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { runPipeline } from '@/lib/agent/pipeline';
 import { calculateNextRun } from '@/lib/utils';
-import type { TimeWindow, OutputMode, Frequency } from '@/lib/types';
+import type { TimeWindow, OutputMode, Frequency, Language } from '@/lib/types';
 
 export const maxDuration = 60;
 
-export async function POST() {
+export async function POST(request: Request) {
+  const { language = 'en' } = await request.json().catch(() => ({})) as { language?: Language };
   const supabase = await createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
@@ -39,6 +40,7 @@ export async function POST() {
             topicIntent: subscription.topic_intent,
             timeWindow: subscription.time_window as TimeWindow,
             outputMode: subscription.output_mode as OutputMode,
+            language,
           },
           {
             onStageStart: (stage) => send({ type: 'stage_start', stage }),

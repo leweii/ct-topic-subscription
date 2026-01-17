@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import ReactMarkdown from 'react-markdown';
+import { useLanguage } from '@/lib/i18n/context';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import type { Artifact } from '@/lib/types';
 
 export default function ResultPage() {
@@ -12,6 +14,7 @@ export default function ResultPage() {
   const [showSources, setShowSources] = useState(false);
   const router = useRouter();
   const supabase = createClient();
+  const { t } = useLanguage();
 
   useEffect(() => {
     loadLatestArtifact();
@@ -40,7 +43,7 @@ export default function ResultPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-500">Loading...</div>
+        <div className="text-gray-500">{t('common.loading')}</div>
       </div>
     );
   }
@@ -48,10 +51,13 @@ export default function ResultPage() {
   if (!artifact) {
     return (
       <div className="min-h-screen flex items-center justify-center">
+        <div className="absolute top-4 right-4">
+          <LanguageSwitcher />
+        </div>
         <div className="text-center">
-          <p className="text-gray-500 mb-4">No analysis results yet</p>
+          <p className="text-gray-500 mb-4">{t('result.noResults')}</p>
           <a href="/subscription" className="text-blue-600 hover:underline">
-            Create a subscription to get started →
+            {t('result.getStarted')} →
           </a>
         </div>
       </div>
@@ -64,10 +70,11 @@ export default function ResultPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-3xl mx-auto px-4">
-        <div className="mb-6">
+        <div className="flex justify-between items-center mb-6">
           <a href="/subscription" className="text-blue-600 hover:underline text-sm">
-            ← Back to subscription
+            ← {t('result.back')}
           </a>
+          <LanguageSwitcher />
         </div>
 
         <article className="bg-white rounded-lg shadow-md p-8">
@@ -99,7 +106,7 @@ export default function ResultPage() {
           {content.output.uncertainties.length > 0 && (
             <section className="mb-8">
               <h3 className="text-lg font-semibold mb-3 text-gray-700">
-                Points to Watch
+                {t('result.pointsToWatch')}
               </h3>
               <ul className="space-y-2">
                 {content.output.uncertainties.map((item, i) => (
@@ -119,7 +126,7 @@ export default function ResultPage() {
               className="flex items-center text-gray-600 hover:text-gray-900"
             >
               <span className="mr-2">{showSources ? '▼' : '▶'}</span>
-              <span>Sources ({keptSources.length})</span>
+              <span>{t('result.sources')} ({keptSources.length})</span>
             </button>
 
             {showSources && (

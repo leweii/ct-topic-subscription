@@ -1,7 +1,15 @@
 import { generate, parseJsonResponse } from '@/lib/gemini';
-import type { Insight, ArtifactOutput, OutputMode } from '@/lib/types';
+import type { Insight, ArtifactOutput, OutputMode, Language } from '@/lib/types';
+
+const LANGUAGE_INSTRUCTIONS: Record<Language, string> = {
+  en: 'Write all output in English.',
+  zh: '请用中文撰写所有输出内容。',
+};
 
 const EDITOR_PROMPT_BRIEF = `You are a professional tech editor. Transform analysis insights into a concise research brief.
+
+## Language Requirement
+{languageInstruction}
 
 ## Insight Content
 {insightsJson}
@@ -25,6 +33,9 @@ Return ONLY the JSON, no other text.`;
 
 const EDITOR_PROMPT_REPORT = `You are a professional tech editor. Transform analysis insights into a deep research report.
 
+## Language Requirement
+{languageInstruction}
+
 ## Insight Content
 {insightsJson}
 
@@ -47,10 +58,13 @@ Return ONLY the JSON, no other text.`;
 
 export async function editor(
   insights: Insight[],
-  outputMode: OutputMode
+  outputMode: OutputMode,
+  language: Language
 ): Promise<ArtifactOutput> {
   const promptTemplate = outputMode === 'brief' ? EDITOR_PROMPT_BRIEF : EDITOR_PROMPT_REPORT;
-  const prompt = promptTemplate.replace('{insightsJson}', JSON.stringify(insights, null, 2));
+  const prompt = promptTemplate
+    .replace('{languageInstruction}', LANGUAGE_INSTRUCTIONS[language])
+    .replace('{insightsJson}', JSON.stringify(insights, null, 2));
 
   const response = await generate(prompt);
   return parseJsonResponse<ArtifactOutput>(response);

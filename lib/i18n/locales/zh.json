@@ -1,0 +1,62 @@
+{
+  "login": {
+    "title": "登录",
+    "email": "邮箱地址",
+    "emailPlaceholder": "you@example.com",
+    "submit": "发送登录链接",
+    "sending": "发送中...",
+    "checkEmail": "请查收邮件",
+    "linkSent": "我们已发送登录链接至",
+    "clickLink": "点击邮件中的链接即可登录",
+    "verifyError": "验证失败，请重试",
+    "completeVerify": "请完成人机验证",
+    "unexpectedError": "发生意外错误"
+  },
+  "subscription": {
+    "create": "创建订阅",
+    "edit": "编辑订阅",
+    "signOut": "退出登录",
+    "topicLabel": "研究意图",
+    "topicPlaceholder": "描述你想追踪的内容，例如：AI Agent 的最新进展",
+    "timeWindow": "时间范围",
+    "outputMode": "输出模式",
+    "frequency": "执行频率",
+    "saveRun": "保存并运行",
+    "createRun": "创建并运行",
+    "saving": "保存中...",
+    "viewResult": "查看最新结果",
+    "timeOptions": {
+      "3d": "过去 3 天",
+      "7d": "过去 7 天",
+      "30d": "过去 30 天"
+    },
+    "outputOptions": {
+      "brief": "简报",
+      "report": "报告"
+    },
+    "frequencyOptions": {
+      "once": "单次",
+      "daily": "每天",
+      "weekly": "每周",
+      "monthly": "每月"
+    }
+  },
+  "result": {
+    "back": "返回订阅",
+    "noResults": "暂无分析结果",
+    "getStarted": "创建订阅以开始使用",
+    "pointsToWatch": "待观察要点",
+    "sources": "信息来源"
+  },
+  "pipeline": {
+    "starting": "启动中...",
+    "searching": "搜索中...",
+    "filtering": "筛选中...",
+    "analyzing": "分析中...",
+    "writing": "撰写中...",
+    "error": "发生错误"
+  },
+  "common": {
+    "loading": "加载中..."
+  }
+}

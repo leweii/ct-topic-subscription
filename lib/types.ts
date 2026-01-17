@@ -3,6 +3,7 @@ export type OutputMode = 'brief' | 'report';
 export type Frequency = 'once' | 'daily' | 'weekly' | 'monthly';
 export type SourceType = 'youtube' | 'blog' | 'official';
 export type Confidence = 'high' | 'medium' | 'low';
+export type Language = 'en' | 'zh';
 
 export interface Subscription {
   id: string;
@@ -67,6 +68,7 @@ export interface PipelineInput {
   topicIntent: string;
   timeWindow: TimeWindow;
   outputMode: OutputMode;
+  language: Language;
 }
 
 export interface PipelineCallbacks {

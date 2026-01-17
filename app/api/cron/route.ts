@@ -39,6 +39,7 @@ export async function GET(request: NextRequest) {
         topicIntent: sub.topic_intent,
         timeWindow: sub.time_window as TimeWindow,
         outputMode: sub.output_mode as OutputMode,
+        language: 'en', // Default to English for scheduled runs
       });
 
       await supabase.from('artifacts').insert({

@@ -1,0 +1,62 @@
+{
+  "login": {
+    "title": "Sign In",
+    "email": "Email address",
+    "emailPlaceholder": "you@example.com",
+    "submit": "Send login link",
+    "sending": "Sending...",
+    "checkEmail": "Check your email",
+    "linkSent": "We sent a login link to",
+    "clickLink": "Click the link in the email to sign in",
+    "verifyError": "Verification failed, please try again",
+    "completeVerify": "Please complete the verification",
+    "unexpectedError": "An unexpected error occurred"
+  },
+  "subscription": {
+    "create": "Create Subscription",
+    "edit": "Edit Subscription",
+    "signOut": "Sign out",
+    "topicLabel": "Research Intent",
+    "topicPlaceholder": "Describe what you want to track, e.g., Latest developments in AI agents",
+    "timeWindow": "Time Window",
+    "outputMode": "Output Mode",
+    "frequency": "Frequency",
+    "saveRun": "Save & Run",
+    "createRun": "Create & Run",
+    "saving": "Saving...",
+    "viewResult": "View latest result",
+    "timeOptions": {
+      "3d": "Past 3 days",
+      "7d": "Past 7 days",
+      "30d": "Past 30 days"
+    },
+    "outputOptions": {
+      "brief": "Brief",
+      "report": "Report"
+    },
+    "frequencyOptions": {
+      "once": "One-time",
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly"
+    }
+  },
+  "result": {
+    "back": "Back to subscription",
+    "noResults": "No analysis results yet",
+    "getStarted": "Create a subscription to get started",
+    "pointsToWatch": "Points to Watch",
+    "sources": "Sources"
+  },
+  "pipeline": {
+    "starting": "Starting...",
+    "searching": "Searching...",
+    "filtering": "Filtering...",
+    "analyzing": "Analyzing...",
+    "writing": "Writing...",
+    "error": "Error occurred"
+  },
+  "common": {
+    "loading": "Loading..."
+  }
+}
