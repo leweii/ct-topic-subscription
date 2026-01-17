@@ -10,17 +10,17 @@ export async function runPipeline(
 ): Promise<ArtifactContent> {
   // 1. Scout: Search for content using Gemini Grounding
   callbacks?.onStageStart?.('scout');
-  const scoutResult = await scout(input.topicIntent, input.timeWindow);
+  const scoutResult = await scout(input.topicIntent, input.timeWindow, input.language);
   callbacks?.onStageComplete?.('scout', scoutResult);
 
   // 2. Judge: Filter and deduplicate
   callbacks?.onStageStart?.('judge');
-  const judgeResult = await judge(scoutResult.sources, input.topicIntent);
+  const judgeResult = await judge(scoutResult.sources, input.topicIntent, input.language);
   callbacks?.onStageComplete?.('judge', judgeResult);
 
   // 3. Analyst: Extract insights
   callbacks?.onStageStart?.('analyst');
-  const analystResult = await analyst(judgeResult.keptSources, input.topicIntent);
+  const analystResult = await analyst(judgeResult.keptSources, input.topicIntent, input.language);
   callbacks?.onStageComplete?.('analyst', analystResult);
 
   // 4. Editor: Generate final output in the specified language
